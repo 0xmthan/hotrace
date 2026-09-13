@@ -6,7 +6,7 @@
 /*   By: mtaheri@student.42istanbul.com.tr          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/13 15:53:09 by mtaheri           #+#    #+#             */
-/*   Updated: 2026/09/13 21:06:23 by mtaheri          ###   ########.fr       */
+/*   Updated: 2026/09/13 22:06:22 by mtaheri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,14 +96,24 @@ char	*list_find(t_hashtable *ht, const char *key)
 	return (NULL);
 }
 
-void	list_free(t_hashtable *ht)
+int	ht_init(t_hashtable *ht)
 {
 	size_t	i;
 
+	ht->buckets = malloc(sizeof(t_node *) * HASH_SIZE);
+	if (!ht->buckets)
+		return (-1);
 	i = 0;
 	while (i < HASH_SIZE)
 	{
 		ht->buckets[i] = NULL;
 		i++;
 	}
+	return (0);
+}
+
+void	list_free(t_hashtable *ht)
+{
+	free(ht->buckets);
+	ht->buckets = NULL;
 }

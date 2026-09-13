@@ -6,7 +6,7 @@
 /*   By: mtaheri@student.42istanbul.com.tr          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/13 11:00:32 by mtaheri           #+#    #+#             */
-/*   Updated: 2026/09/13 18:34:36 by mtaheri          ###   ########.fr       */
+/*   Updated: 2026/09/13 22:31:09 by mtaheri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # define OUT_SIZE 65536
 # define POOL_SIZE 65536
 # define ARENA_CHUNK_SIZE (1024 * 1024)
-# define HASH_SIZE 131072
+# define HASH_SIZE 2097152
 
 typedef enum e_state
 {
@@ -38,7 +38,7 @@ typedef struct s_node
 
 typedef struct s_hashtable
 {
-	t_node	*buckets[HASH_SIZE];
+	t_node	**buckets;
 }	t_hashtable;
 
 typedef struct s_pool
@@ -78,6 +78,7 @@ int				out_write(const char *s, size_t len);
 int				out_str(const char *s);
 int				out_flush(void);
 
+int				ht_init(t_hashtable *ht);
 int				list_add(t_hashtable *ht, char *key, char *value,
 					t_pool **pool);
 char			*list_find(t_hashtable *ht, const char *key);
