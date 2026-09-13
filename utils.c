@@ -12,6 +12,74 @@
 
 #include "hotrace.h"
 
+int	arena_init(t_arena *arena)
+{
+	t_arena_chunk	*chunk;
+
+	chunk = malloc(sizeof(t_arena_chunk));
+	if (!chunk)
+		return (-1);
+	chunk->buf = malloc(ARENA_CHUNK_SIZE);
+	if (!chunk->buf)
+	{
+		free(chunk);
+		return (-1);
+	}
+	chunk->next = NULL;
+	arena->chunks = chunk;
+	arena->current = chunk;
+	arena->offset = 0;
+	return (0);
+}
+
+char	*arena_strdup(t_arena *arena, const char *s)
+{
+	size_t	len;
+	char	*result;
+
+	len = ft_strlen(s) + 1;
+	if (arena->offset + len > ARENA_CHUNK_SIZE)
+	{
+		t_arena_chunk	*new_chunk;
+
+		new_chunk = malloc(sizeof(t_arena_chunk));
+		if (!new_chunk)
+			return (NULL);
+		new_chunk->buf = malloc(ARENA_CHUNK_SIZE);
+		if (!new_chunk->buf)
+		{
+			free(new_chunk);
+			return (NULL);
+		}
+		new_chunk->next = NULL;
+		arena->current->next = new_chunk;
+		arena->current = new_chunk;
+		arena->offset = 0;
+	}
+	result = arena->current->buf + arena->offset;
+	ft_memmove(result, s, len);
+	arena->offset += len;
+	return (result);
+}
+
+void	arena_free(t_arena *arena)
+{
+	t_arena_chunk	*chunk;
+	t_arena_chunk	*next;
+
+	chunk = arena->chunks;
+	while (chunk)
+	{
+		next = chunk->next;
+		free(chunk->buf);
+		free(chunk);
+		chunk = next;
+	}
+	arena->chunks = NULL;
+	arena->current = NULL;
+	arena->offset = 0;
+}
+
 void	ft_memmove(char *dst, const char *src, size_t n)
 {
 	size_t	i;

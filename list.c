@@ -12,16 +12,61 @@
 
 #include "hotrace.h"
 
-int	list_add(t_node **list, char *key, char *value)
+t_pool	*pool_new(void)
+{
+	t_pool	*pool;
+
+	pool = malloc(sizeof(t_pool));
+	if (!pool)
+		return (NULL);
+	pool->idx = 0;
+	pool->next = NULL;
+	return (pool);
+}
+
+t_node	*pool_alloc(t_pool **pool)
+{
+	t_pool	*current;
+
+	if (!*pool)
+	{
+		*pool = pool_new();
+		if (!*pool)
+			return (NULL);
+	}
+	current = *pool;
+	while (current->idx >= POOL_SIZE && current->next)
+		current = current->next;
+	if (current->idx >= POOL_SIZE)
+	{
+		current->next = pool_new();
+		if (!current->next)
+			return (NULL);
+		current = current->next;
+	}
+	return (&current->nodes[current->idx++]);
+}
+
+void	pool_free(t_pool *pool)
+{
+	t_pool	*next;
+
+	while (pool)
+	{
+		next = pool->next;
+		free(pool);
+		pool = next;
+	}
+}
+
+int	list_add(t_node **list, char *key, char *value, t_pool **pool)
 {
 	t_node	*node;
 
-	node = malloc(sizeof(t_node));
+	node = pool_alloc(pool);
 	if (!node || !value)
 	{
-		free(node);
 		free(key);
-		free(value);
 		return (-1);
 	}
 	node->key = key;
@@ -44,14 +89,5 @@ char	*list_find(t_node *list, const char *key)
 
 void	list_free(t_node *list)
 {
-	t_node	*next;
-
-	while (list)
-	{
-		next = list->next;
-		free(list->key);
-		free(list->value);
-		free(list);
-		list = next;
-	}
+	(void)list;
 }

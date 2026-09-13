@@ -18,6 +18,15 @@
 
 # define READ_SIZE 65536
 # define OUT_SIZE 65536
+# define POOL_SIZE 1024
+# define ARENA_CHUNK_SIZE (1024 * 1024)
+
+typedef enum e_state
+{
+	WAITING_KEY,
+	WAITING_VALUE,
+	SEARCHING
+}	t_state;
 
 typedef struct s_node
 {
@@ -25,6 +34,26 @@ typedef struct s_node
 	char			*value;
 	struct s_node	*next;
 }	t_node;
+
+typedef struct s_pool
+{
+	t_node			nodes[POOL_SIZE];
+	struct s_pool	*next;
+	size_t			idx;
+}	t_pool;
+
+typedef struct s_arena_chunk
+{
+	char				*buf;
+	struct s_arena_chunk	*next;
+}	t_arena_chunk;
+
+typedef struct s_arena
+{
+	t_arena_chunk	*chunks;
+	t_arena_chunk	*current;
+	size_t			offset;
+}	t_arena;
 
 typedef struct s_reader
 {
@@ -43,9 +72,17 @@ int				out_write(const char *s, size_t len);
 int				out_str(const char *s);
 int				out_flush(void);
 
-int				list_add(t_node **list, char *key, char *value);
+int				list_add(t_node **list, char *key, char *value, t_pool **pool);
 char			*list_find(t_node *list, const char *key);
 void			list_free(t_node *list);
+
+t_pool			*pool_new(void);
+t_node			*pool_alloc(t_pool **pool);
+void			pool_free(t_pool *pool);
+
+int				arena_init(t_arena *arena);
+char			*arena_strdup(t_arena *arena, const char *s);
+void			arena_free(t_arena *arena);
 
 void			ft_memmove(char *dst, const char *src, size_t n);
 char			*ft_memchr(char *s, char c, size_t n);
