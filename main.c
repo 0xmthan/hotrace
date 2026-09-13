@@ -12,7 +12,7 @@
 
 #include "hotrace.h"
 
-static int	process_store_search(t_reader *reader, t_node **list, t_arena *arena, t_pool **pool)
+static int	process_store_search(t_reader *reader, t_hashtable *ht, t_arena *arena, t_pool **pool)
 {
 	char	*line;
 	char	*key;
@@ -45,7 +45,7 @@ static int	process_store_search(t_reader *reader, t_node **list, t_arena *arena,
 			}
 			else
 			{
-				if (list_add(list, key, arena_strdup(arena, line), pool) < 0)
+				if (list_add(ht, key, arena_strdup(arena, line), pool) < 0)
 					return (-1);
 				key = NULL;
 				state = WAITING_KEY;
@@ -55,7 +55,7 @@ static int	process_store_search(t_reader *reader, t_node **list, t_arena *arena,
 		{
 			char	*value;
 
-			value = list_find(*list, line);
+			value = list_find(ht, line);
 			if (value && (out_str(value) < 0 || out_str("\n") < 0))
 				return (-1);
 			if (!value && (out_str(line) < 0 || out_str(": Not found.\n") < 0))
@@ -69,12 +69,18 @@ static int	process_store_search(t_reader *reader, t_node **list, t_arena *arena,
 int	main(void)
 {
 	t_reader	reader;
-	t_node		*list;
+	t_hashtable	ht;
 	t_arena		arena;
 	t_pool		*pool;
 	int			ret;
+	size_t		i;
 
-	list = NULL;
+	i = 0;
+	while (i < HASH_SIZE)
+	{
+		ht.buckets[i] = NULL;
+		i++;
+	}
 	pool = NULL;
 	if (reader_init(&reader) < 0)
 		return (write(2, "Error on reader_init\n", 21));
@@ -83,11 +89,11 @@ int	main(void)
 		reader_free(&reader);
 		return (write(2, "Error on arena_init\n", 21));
 	}
-	ret = process_store_search(&reader, &list, &arena, &pool);
+	ret = process_store_search(&reader, &ht, &arena, &pool);
 	if (out_flush() < 0)
 		ret = -1;
 	reader_free(&reader);
-	list_free(list);
+	list_free(&ht);
 	pool_free(pool);
 	arena_free(&arena);
 	if (ret < 0)

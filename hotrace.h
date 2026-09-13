@@ -20,6 +20,7 @@
 # define OUT_SIZE 65536
 # define POOL_SIZE 1024
 # define ARENA_CHUNK_SIZE (1024 * 1024)
+# define HASH_SIZE 1024
 
 typedef enum e_state
 {
@@ -34,6 +35,11 @@ typedef struct s_node
 	char			*value;
 	struct s_node	*next;
 }	t_node;
+
+typedef struct s_hashtable
+{
+	t_node	*buckets[HASH_SIZE];
+}	t_hashtable;
 
 typedef struct s_pool
 {
@@ -72,9 +78,10 @@ int				out_write(const char *s, size_t len);
 int				out_str(const char *s);
 int				out_flush(void);
 
-int				list_add(t_node **list, char *key, char *value, t_pool **pool);
-char			*list_find(t_node *list, const char *key);
-void			list_free(t_node *list);
+int				list_add(t_hashtable *ht, char *key, char *value,
+					t_pool **pool);
+char			*list_find(t_hashtable *ht, const char *key);
+void			list_free(t_hashtable *ht);
 
 t_pool			*pool_new(void);
 t_node			*pool_alloc(t_pool **pool);
@@ -89,5 +96,6 @@ char			*ft_memchr(char *s, char c, size_t n);
 size_t			ft_strlen(const char *s);
 char			*ft_strdup(const char *s);
 int				ft_strcmp(const char *s1, const char *s2);
+size_t			djb2_hash(const char *str);
 
 #endif
