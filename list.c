@@ -12,43 +12,19 @@
 
 #include "hotrace.h"
 
-t_pool	*pool_new(void)
+size_t	djb2_hash(const char *str)
 {
-	t_pool	*pool;
+	register size_t		hash;
+	register const char	*s;
 
-	pool = malloc(sizeof(t_pool));
-	if (!pool)
-		return (NULL);
-	pool->idx = 0;
-	pool->next = NULL;
-	return (pool);
-}
-
-t_node	*pool_alloc(t_pool **pool)
-{
-	t_pool	*new_pool;
-
-	if (!*pool || (*pool)->idx >= POOL_SIZE)
+	hash = 5381;
+	s = str;
+	while (*s)
 	{
-		new_pool = pool_new();
-		if (!new_pool)
-			return (NULL);
-		new_pool->next = *pool;
-		*pool = new_pool;
+		hash = ((hash << 5) + hash) + *s;
+		s++;
 	}
-	return (&(*pool)->nodes[(*pool)->idx++]);
-}
-
-void	pool_free(t_pool *pool)
-{
-	t_pool	*next;
-
-	while (pool)
-	{
-		next = pool->next;
-		free(pool);
-		pool = next;
-	}
+	return (hash & (HASH_SIZE - 1));
 }
 
 int	list_add(t_hashtable *ht, char *key, char *value, t_pool **pool)
