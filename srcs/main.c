@@ -3,13 +3,14 @@
 
 void	process_input(void)
 {
-	
+
 }
 
 
 int	main(void)
 {
-	ft_putendl("Merhaba");
-	ft_putendl("Dunya");
+	t_hotrace hotrace;
+
+	
 	return (0);
 }
