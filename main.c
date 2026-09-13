@@ -6,7 +6,7 @@
 /*   By: mtaheri@student.42istanbul.com.tr          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/13 10:22:52 by mtaheri           #+#    #+#             */
-/*   Updated: 2026/09/13 18:41:10 by mtaheri          ###   ########.fr       */
+/*   Updated: 2026/09/13 21:06:16 by mtaheri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,11 +83,11 @@ int	main(void)
 	}
 	pool = NULL;
 	if (reader_init(&reader) < 0)
-		return (write(2, "Error on reader_init\n", 21));
+		return (write(2, "Error on reader_init\n", 21), 1);
 	if (arena_init(&arena) < 0)
 	{
 		reader_free(&reader);
-		return (write(2, "Error on arena_init\n", 21));
+		return (write(2, "Error on arena_init\n", 21), 1);
 	}
 	ret = process_store_search(&reader, &ht, &arena, &pool);
 	if (out_flush() < 0)
@@ -97,6 +97,6 @@ int	main(void)
 	pool_free(pool);
 	arena_free(&arena);
 	if (ret < 0)
-		return (write(2, "Error\n", 6));
+		return (write(2, "Error\n", 6), 1);
 	return (0);
 }

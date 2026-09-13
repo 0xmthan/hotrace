@@ -6,7 +6,7 @@
 /*   By: mtaheri@student.42istanbul.com.tr          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/13 10:32:11 by mtaheri           #+#    #+#             */
-/*   Updated: 2026/09/13 18:18:09 by mtaheri          ###   ########.fr       */
+/*   Updated: 2026/09/13 21:06:36 by mtaheri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,30 +32,38 @@ int	arena_init(t_arena *arena)
 	return (0);
 }
 
+static int	arena_grow(t_arena *arena, size_t len)
+{
+	t_arena_chunk	*chunk;
+	size_t			size;
+
+	size = ARENA_CHUNK_SIZE;
+	if (len > size)
+		size = len;
+	chunk = malloc(sizeof(t_arena_chunk));
+	if (!chunk)
+		return (-1);
+	chunk->buf = malloc(size);
+	if (!chunk->buf)
+	{
+		free(chunk);
+		return (-1);
+	}
+	chunk->next = NULL;
+	arena->current->next = chunk;
+	arena->current = chunk;
+	arena->offset = 0;
+	return (0);
+}
+
 char	*arena_strdup(t_arena *arena, const char *s)
 {
 	size_t	len;
 	char	*result;
 
 	len = ft_strlen(s) + 1;
-	if (arena->offset + len > ARENA_CHUNK_SIZE)
-	{
-		t_arena_chunk	*new_chunk;
-
-		new_chunk = malloc(sizeof(t_arena_chunk));
-		if (!new_chunk)
-			return (NULL);
-		new_chunk->buf = malloc(ARENA_CHUNK_SIZE);
-		if (!new_chunk->buf)
-		{
-			free(new_chunk);
-			return (NULL);
-		}
-		new_chunk->next = NULL;
-		arena->current->next = new_chunk;
-		arena->current = new_chunk;
-		arena->offset = 0;
-	}
+	if (arena->offset + len > ARENA_CHUNK_SIZE && arena_grow(arena, len) < 0)
+		return (NULL);
 	result = arena->current->buf + arena->offset;
 	ft_memmove(result, s, len);
 	arena->offset += len;

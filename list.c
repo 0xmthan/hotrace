@@ -6,7 +6,7 @@
 /*   By: mtaheri@student.42istanbul.com.tr          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/13 15:53:09 by mtaheri           #+#    #+#             */
-/*   Updated: 2026/09/13 18:34:54 by mtaheri          ###   ########.fr       */
+/*   Updated: 2026/09/13 21:06:23 by mtaheri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,7 @@ int	list_add(t_hashtable *ht, char *key, char *value, t_pool **pool)
 
 	node = pool_alloc(pool);
 	if (!node || !value)
-	{
-		free(key);
 		return (-1);
-	}
 	node->key = key;
 	node->value = value;
 	index = djb2_hash(key);
