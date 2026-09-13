@@ -6,7 +6,7 @@
 /*   By: mtaheri@student.42istanbul.com.tr          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/09/13 10:22:52 by mtaheri           #+#    #+#             */
-/*   Updated: 2026/09/13 22:23:39 by mtaheri          ###   ########.fr       */
+/*   Updated: 2026/09/13 22:37:29 by mtaheri          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int	main(void)
 	if (arena_init(&arena) < 0)
 	{
 		reader_free(&reader);
-		return (write(2, "Error on arena_init\n", 21), 1);
+		return (write(2, "Error on arena_init\n", 20), 1);
 	}
 	if (ht_init(&ht) < 0)
 	{
