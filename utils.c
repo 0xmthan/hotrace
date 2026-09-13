@@ -90,7 +90,8 @@ void	arena_free(t_arena *arena)
 
 void	ft_memmove(char *dst, const char *src, size_t n)
 {
-	size_t	i;
+	register size_t	i;
+	register size_t	cnt;
 
 	if (dst == src || n == 0)
 		return ;
@@ -104,22 +105,25 @@ void	ft_memmove(char *dst, const char *src, size_t n)
 		}
 		return ;
 	}
-	while (n > 0)
+	cnt = n;
+	while (cnt > 0)
 	{
-		n--;
-		dst[n] = src[n];
+		cnt--;
+		dst[cnt] = src[cnt];
 	}
 }
 
 char	*ft_memchr(char *s, char c, size_t n)
 {
-	size_t	i;
+	register size_t	i;
+	register char	*ptr;
 
 	i = 0;
+	ptr = s;
 	while (i < n)
 	{
-		if (s[i] == c)
-			return (s + i);
+		if (ptr[i] == c)
+			return (ptr + i);
 		i++;
 	}
 	return (NULL);
@@ -127,7 +131,7 @@ char	*ft_memchr(char *s, char c, size_t n)
 
 size_t	ft_strlen(const char *s)
 {
-	size_t	i;
+	register size_t	i;
 
 	i = 0;
 	while (s[i])
@@ -150,7 +154,7 @@ char	*ft_strdup(const char *s)
 
 int	ft_strcmp(const char *s1, const char *s2)
 {
-	size_t	i;
+	register size_t	i;
 
 	i = 0;
 	while (s1[i] && s1[i] == s2[i])
@@ -160,11 +164,13 @@ int	ft_strcmp(const char *s1, const char *s2)
 
 size_t	djb2_hash(const char *str)
 {
-	size_t	hash;
+	register size_t	hash;
+	register const char	*s;
 	int		c;
 
 	hash = 5381;
-	while ((c = *str++))
+	s = str;
+	while ((c = *s++))
 		hash = ((hash << 5) + hash) + c;
 	return (hash & (HASH_SIZE - 1));
 }
