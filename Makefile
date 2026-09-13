@@ -1,7 +1,7 @@
 NAME	= hotrace
 
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -O3 -fno-builtin
+CFLAGS	= -Wall -Wextra -Werror
 
 SRC		= main.c reader.c output.c list.c utils.c
 OBJ		= $(SRC:.c=.o)

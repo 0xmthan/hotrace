@@ -69,33 +69,41 @@ static int	process_store_search(t_reader *reader, t_hashtable *ht, t_arena *aren
 int	main(void)
 {
 	t_reader	reader;
-	t_hashtable	ht;
+	t_hashtable	*ht;
 	t_arena		arena;
 	t_pool		*pool;
 	int			ret;
 	size_t		i;
 
+	ht = malloc(sizeof(t_hashtable));
+	if (!ht)
+		return (write(2, "Error on hashtable malloc\n", 26));
 	i = 0;
 	while (i < HASH_SIZE)
 	{
-		ht.buckets[i] = NULL;
+		ht->buckets[i] = NULL;
 		i++;
 	}
 	pool = NULL;
 	if (reader_init(&reader) < 0)
+	{
+		free(ht);
 		return (write(2, "Error on reader_init\n", 21));
+	}
 	if (arena_init(&arena) < 0)
 	{
 		reader_free(&reader);
+		free(ht);
 		return (write(2, "Error on arena_init\n", 21));
 	}
-	ret = process_store_search(&reader, &ht, &arena, &pool);
+	ret = process_store_search(&reader, ht, &arena, &pool);
 	if (out_flush() < 0)
 		ret = -1;
 	reader_free(&reader);
-	list_free(&ht);
+	list_free(ht);
 	pool_free(pool);
 	arena_free(&arena);
+	free(ht);
 	if (ret < 0)
 		return (write(2, "Error\n", 6));
 	return (0);

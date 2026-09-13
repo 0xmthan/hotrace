@@ -26,25 +26,17 @@ t_pool	*pool_new(void)
 
 t_node	*pool_alloc(t_pool **pool)
 {
-	t_pool	*current;
+	t_pool	*new_pool;
 
-	if (!*pool)
+	if (!*pool || (*pool)->idx >= POOL_SIZE)
 	{
-		*pool = pool_new();
-		if (!*pool)
+		new_pool = pool_new();
+		if (!new_pool)
 			return (NULL);
+		new_pool->next = *pool;
+		*pool = new_pool;
 	}
-	current = *pool;
-	while (current->idx >= POOL_SIZE && current->next)
-		current = current->next;
-	if (current->idx >= POOL_SIZE)
-	{
-		current->next = pool_new();
-		if (!current->next)
-			return (NULL);
-		current = current->next;
-	}
-	return (&current->nodes[current->idx++]);
+	return (&(*pool)->nodes[(*pool)->idx++]);
 }
 
 void	pool_free(t_pool *pool)
@@ -62,17 +54,29 @@ void	pool_free(t_pool *pool)
 int	list_add(t_hashtable *ht, char *key, char *value, t_pool **pool)
 {
 	t_node	*node;
+	t_node	*existing;
 	size_t	index;
 
-	node = pool_alloc(pool);
-	if (!node || !value)
+	if (!value)
+		return (-1);
+	index = djb2_hash(key);
+	existing = ht->buckets[index];
+	while (existing)
 	{
-		free(key);
+		if (ft_strcmp(existing->key, key) == 0)
+		{
+			existing->value = value;
+			return (0);
+		}
+		existing = existing->next;
+	}
+	node = pool_alloc(pool);
+	if (!node)
+	{
 		return (-1);
 	}
 	node->key = key;
 	node->value = value;
-	index = djb2_hash(key);
 	node->next = ht->buckets[index];
 	ht->buckets[index] = node;
 	return (0);
