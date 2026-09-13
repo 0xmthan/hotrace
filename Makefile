@@ -1,6 +1,12 @@
 
 NAME = hotrace
 CC = cc
+
+# -O3 (Optimization Level 3), GCC ve Clang derleyicilerindeki en agresif hız optimizasyonu seviyesidir.
+# Function Inlining
+# Loop Unrolling
+# 03 flag'ini kaldırıcaz muhtemelen, ama onun yaptığı hız optimizasyonlarını elle yapabiliriz.
+
 CFLAGS = -Wall -Wextra -Werror -O3
 
 OBJ_PATH = objects/
