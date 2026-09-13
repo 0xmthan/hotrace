@@ -81,3 +81,14 @@ int	ft_strcmp(const char *s1, const char *s2)
 		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
 }
+
+size_t	djb2_hash(const char *str)
+{
+	size_t	hash;
+	int		c;
+
+	hash = 5381;
+	while ((c = *str++))
+		hash = ((hash << 5) + hash) + c;
+	return (hash % HASH_SIZE);
+}

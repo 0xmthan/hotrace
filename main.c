@@ -12,7 +12,7 @@
 
 #include "hotrace.h"
 
-static int	store_pairs(t_reader *reader, t_node **list)
+static int	store_pairs(t_reader *reader, t_hashtable *ht)
 {
 	char	*line;
 	char	*key;
@@ -30,14 +30,14 @@ static int	store_pairs(t_reader *reader, t_node **list)
 			free(key);
 			return (ret);
 		}
-		if (list_add(list, key, ft_strdup(line)) < 0)
+		if (list_add(ht, key, ft_strdup(line)) < 0)
 			return (-1);
 		ret = reader_next(reader, &line);
 	}
 	return (ret);
 }
 
-static int	search_keys(t_reader *reader, t_node *list)
+static int	search_keys(t_reader *reader, t_hashtable *ht)
 {
 	char	*line;
 	char	*value;
@@ -46,7 +46,7 @@ static int	search_keys(t_reader *reader, t_node *list)
 	ret = reader_next(reader, &line);
 	while (ret == 1)
 	{
-		value = list_find(list, line);
+		value = list_find(ht, line);
 		if (value && (out_str(value) < 0 || out_str("\n") < 0))
 			return (-1);
 		if (!value && (out_str(line) < 0 || out_str(": Not found.\n") < 0))
@@ -59,19 +59,25 @@ static int	search_keys(t_reader *reader, t_node *list)
 int	main(void)
 {
 	t_reader	reader;
-	t_node		*list;
+	t_hashtable	ht;
 	int			ret;
+	size_t		i;
 
-	list = NULL;
+	i = 0;
+	while (i < HASH_SIZE)
+	{
+		ht.buckets[i] = NULL;
+		i++;
+	}
 	if (reader_init(&reader) < 0)
 		return (write(2, "Error on reader_init\n", 21));
-	ret = store_pairs(&reader, &list);
+	ret = store_pairs(&reader, &ht);
 	if (ret == 1)
-		ret = search_keys(&reader, list);
+		ret = search_keys(&reader, &ht);
 	if (out_flush() < 0)
 		ret = -1;
 	reader_free(&reader);
-	list_free(list);
+	list_free(&ht);
 	if (ret < 0)
 		return (write(2, "Error\n", 6));
 	return (0);

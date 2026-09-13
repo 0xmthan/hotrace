@@ -12,9 +12,10 @@
 
 #include "hotrace.h"
 
-int	list_add(t_node **list, char *key, char *value)
+int	list_add(t_hashtable *ht, char *key, char *value)
 {
 	t_node	*node;
+	size_t	index;
 
 	node = malloc(sizeof(t_node));
 	if (!node || !value)
@@ -26,32 +27,47 @@ int	list_add(t_node **list, char *key, char *value)
 	}
 	node->key = key;
 	node->value = value;
-	node->next = *list;
-	*list = node;
+	index = djb2_hash(key);
+	node->next = ht->buckets[index];
+	ht->buckets[index] = node;
 	return (0);
 }
 
-char	*list_find(t_node *list, const char *key)
+char	*list_find(t_hashtable *ht, const char *key)
 {
-	while (list)
+	t_node	*node;
+	size_t	index;
+
+	index = djb2_hash(key);
+	node = ht->buckets[index];
+	while (node)
 	{
-		if (ft_strcmp(list->key, key) == 0)
-			return (list->value);
-		list = list->next;
+		if (ft_strcmp(node->key, key) == 0)
+			return (node->value);
+		node = node->next;
 	}
 	return (NULL);
 }
 
-void	list_free(t_node *list)
+void	list_free(t_hashtable *ht)
 {
+	t_node	*node;
 	t_node	*next;
+	size_t	i;
 
-	while (list)
+	i = 0;
+	while (i < HASH_SIZE)
 	{
-		next = list->next;
-		free(list->key);
-		free(list->value);
-		free(list);
-		list = next;
+		node = ht->buckets[i];
+		while (node)
+		{
+			next = node->next;
+			free(node->key);
+			free(node->value);
+			free(node);
+			node = next;
+		}
+		ht->buckets[i] = NULL;
+		i++;
 	}
 }
