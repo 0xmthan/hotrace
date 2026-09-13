@@ -18,9 +18,9 @@
 
 # define READ_SIZE 65536
 # define OUT_SIZE 65536
-# define POOL_SIZE 1024
+# define POOL_SIZE 65536
 # define ARENA_CHUNK_SIZE (1024 * 1024)
-# define HASH_SIZE 1024
+# define HASH_SIZE 131072
 
 typedef enum e_state
 {

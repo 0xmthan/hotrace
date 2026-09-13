@@ -166,5 +166,5 @@ size_t	djb2_hash(const char *str)
 	hash = 5381;
 	while ((c = *str++))
 		hash = ((hash << 5) + hash) + c;
-	return (hash % HASH_SIZE);
+	return (hash & (HASH_SIZE - 1));
 }
