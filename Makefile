@@ -1,32 +1,28 @@
 
 NAME = hotrace
 CC = cc
-# -O3 optimizasyonu hızın puanlandığı bu projede kritik öneme sahiptir.
 CFLAGS = -Wall -Wextra -Werror -O3
 
-SRC_PATH = ./srcs/
-OBJ_PATH = ./objects/
-INC_PATH = ./includes/
+OBJ_PATH = objects/
+INC = -Iincludes
 
-# hotrace kaynak dosyalarınızı buraya ekleyin
-SRC = main.c \
-      hash_table.c \
-      utils.c
+SRC =	srcs/main.c \
+		srcs/utils.c
 
-SRCS = $(addprefix $(SRC_PATH), $(SRC))    
 OBJ = $(SRC:.c=.o)
 OBJS = $(addprefix $(OBJ_PATH), $(OBJ))
 
-INC = -I $(INC_PATH)
-
-MAKEFLAGS += --silent
+# MAKEFLAGS += --silent
 
 all: $(OBJ_PATH) $(NAME)
 
+# Obje klasörünü oluştur
 $(OBJ_PATH):
-	@mkdir -p $(OBJ_PATH)
+	mkdir -p $(OBJ_PATH)
 
-$(OBJ_PATH)%.o: $(SRC_PATH)%.c
+# Ana dizindeki .c dosyalarını okuyup objects/ klasörüne .o olarak derler
+$(OBJ_PATH)%.o: %.c
+	mkdir -p $(dir $@)
 	echo "🔷 Compiling $<..."
 	$(CC) $(CFLAGS) -c $< -o $@ $(INC)
 
