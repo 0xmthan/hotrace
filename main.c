@@ -38,18 +38,10 @@ static int	process_store_search(t_reader *reader, t_hashtable *ht, t_arena *aren
 		}
 		else if (state == WAITING_VALUE)
 		{
-			if (line[0] == '\0')
-			{
-				key = NULL;
-				state = SEARCHING;
-			}
-			else
-			{
-				if (list_add(ht, key, arena_strdup(arena, line), pool) < 0)
-					return (-1);
-				key = NULL;
-				state = WAITING_KEY;
-			}
+			if (list_add(ht, key, arena_strdup(arena, line), pool) < 0)
+				return (-1);
+			key = NULL;
+			state = WAITING_KEY;
 		}
 		else if (state == SEARCHING)
 		{
