@@ -19,7 +19,7 @@
 # define READ_SIZE 65536
 # define OUT_SIZE 65536
 # define POOL_SIZE 65536
-# define ARENA_CHUNK_SIZE (1024 * 1024)
+# define ARENA_CHUNK_SIZE 1048576
 # define HASH_SIZE 2097152
 
 typedef enum e_state
@@ -50,7 +50,7 @@ typedef struct s_pool
 
 typedef struct s_arena_chunk
 {
-	char				*buf;
+	char					*buf;
 	struct s_arena_chunk	*next;
 }	t_arena_chunk;
 
@@ -73,6 +73,9 @@ typedef struct s_reader
 int				reader_init(t_reader *r);
 int				reader_next(t_reader *r, char **line);
 void			reader_free(t_reader *r);
+
+int				process_store_search(t_reader *reader, t_hashtable *ht,
+					t_arena *arena, t_pool **pool);
 
 int				out_write(const char *s, size_t len);
 int				out_str(const char *s);

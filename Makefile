@@ -3,7 +3,7 @@ NAME	= hotrace
 CC		= cc
 CFLAGS	= -Wall -Wextra -Werror
 
-SRC		= main.c reader.c output.c list.c pool.c arena.c utils.c
+SRC		= main.c process.c reader.c output.c list.c pool.c arena.c utils.c
 OBJ		= $(SRC:.c=.o)
 
 all: $(NAME)
